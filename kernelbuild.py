@@ -64,12 +64,15 @@ class KernelBuild:
     def anykernelFiles(self) -> 'list[str]':
         return []
 
+    def preBuildInfo(self) -> 'dict[str, str]':
+        return {}
+
     def doBuild(self):
         print_dictinfo({
             'TARGET_KERNEL': self.kernel_name,
             'USING_TOOLCHAIN': self.toolchaincls.version(),
             'START_TIME': str(datetime.now())
-        })
+        } | self.preBuildInfo())
 
         # Add toolchain in PATH environment variable
         tcPath = self.toolchainDir / 'bin'
