@@ -21,11 +21,12 @@ class KernelBuild:
         self.arch = arch
         self.kernelType = kernelType
 
-    def initArgParser(self):
-        self.argparser = ArgumentParser(
+    def initArgParser(self) -> ArgumentParser:
+        argparser = ArgumentParser(
             description=f'Build {self.kernel_name} with specified arguments'
         )
-        self.argparser.add_argument('--allow-dirty', action='store_true', help='Allow dirty builds')
+        argparser.add_argument('--allow-dirty', action='store_true', help='Allow dirty builds')
+        return argparser
 
     def initFiles(self) -> bool:
         # Check for submodules existence and update it if needed.
@@ -129,8 +130,7 @@ class KernelBuild:
             })
     
     def build(self):
-        self.initArgParser()
-        self.args = self.argparser.parse_args()
+        self.args = self.initArgParser().parse_args()
         if not self.verifyArgs():
             logging.error("Failed to verify args")
             return
