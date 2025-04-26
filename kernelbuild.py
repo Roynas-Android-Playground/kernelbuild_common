@@ -49,11 +49,13 @@ class KernelBuild:
         self.toolchainDir = self.toolchainDir.absolute()
     
     # Meant to be overriden
+    def verifyArgs(self) -> bool:
+        return True
+
     def buildDefconfigList(self) -> 'list[str]':
         return []
 
-    # Meant to be overriden
-    def additionalArgs(self) -> 'list[str]':
+    def additionalMakeArgs(self) -> 'list[str]':
         return []
     
     def zipName(_, name: str, time: str):
@@ -79,7 +81,7 @@ class KernelBuild:
             shutil.rmtree(self.outDir)
         
         common_make = ['make', f'O={self.outDir}', f'-j{os.cpu_count()}', f'ARCH={self.arch}']
-        common_make += self.additionalArgs()
+        common_make += self.additionalMakeArgs()
         make_defconfig : 'list[str]' = []
         make_defconfig += common_make
         make_defconfig += self.buildDefconfigList()
@@ -122,6 +124,9 @@ class KernelBuild:
     def build(self):
         self.initArgParser()
         self.args = self.argparser.parse_args()
+        if not self.verifyArgs():
+            logging.error("Failed to verify args")
+            return
         self.initFiles()
         self.selectToolchain()
         self.doBuild()

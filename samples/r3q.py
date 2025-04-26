@@ -14,7 +14,7 @@ class R3QKernelBuild(KernelBuild):
             defList += ['thinlto.config']
         return defList
     
-    def additionalArgs(self) -> 'list[str]':
+    def additionalMakeArgs(self) -> 'list[str]':
         return KernelBuild.ADDITIONALARGS_LLVM_FULL
 
 def main():
