@@ -27,13 +27,17 @@ class KernelBuild:
         )
         self.argparser.add_argument('--allow-dirty', action='store_true', help='Allow dirty builds')
 
-    def initFiles(self):
+    def initFiles(self) -> bool:
         # Check for submodules existence and update it if needed.
         if check_file(Path('.gitmodules')):
-            popen_impl(['git', 'submodule', 'update', '--init'])
-        
+            try:
+                popen_impl(['git', 'submodule', 'update', '--init'])
+            except RuntimeError:
+                return False
         if not check_file(self.toolchainDir):
             logging.error(f'Please make toolchain available at {self.toolchainDir}')
+            return False
+        return True
         
     def selectToolchain(self):
         maybeExe = self.toolchainDir / 'bin' / 'clang'
@@ -130,7 +134,8 @@ class KernelBuild:
         if not self.verifyArgs():
             logging.error("Failed to verify args")
             return
-        self.initFiles()
+        if not self.initFiles():
+            return
         self.selectToolchain()
         self.doBuild()
         
