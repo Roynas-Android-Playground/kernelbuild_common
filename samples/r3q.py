@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 
 class R3QKernelBuild(KernelBuild):
     def __init__(self):
-        super().__init__('Grass', arch='arm64', kernelType='Image', anykernelDir='AnyKernel3')
+        super().__init__('Grass', arch='arm64', kernelType='Image', anykernelDir=Path('AnyKernel3'))
     
     def initArgParser(self) -> ArgumentParser:
         parser = super().initArgParser()
