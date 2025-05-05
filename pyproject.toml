@@ -1,0 +1,16 @@
+
+[project]
+name = "kernelbuild_common"
+version = "0.1.0"
+description = "A kernel build utility module"
+authors = [{name = "Soo Hwan Na"}]
+readme = "LICENSE"
+license = {file = "LICENSE"}
+requires-python = ">=3.6"
+
+[tool.setuptools]
+packages = ["kernelbuild_common", "kernelbuild_common.compiler"]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"

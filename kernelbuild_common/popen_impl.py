@@ -1,12 +1,15 @@
 import subprocess
+from .loginit import logging
 
 debug_popen_impl = False
 
-def popen_impl(command: 'list[str]'):
-    if debug_popen_impl:
-        print('Execute command: "%s"...' % ' '.join(command), end=' ')
+
+def popen_impl(command: "list[str]"):
     s = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if debug_popen_impl:
+        logging.debug(f'Executing command: "{' '.join(command)}"... has pid {s.pid}')
     out, err = s.communicate()
+
     def write_logs(out: bytes, err: bytes):
         out = out.decode("utf-8")
         err = err.decode("utf-8")
@@ -16,13 +19,13 @@ def popen_impl(command: 'list[str]'):
             f.write(out)
         with open(stderr_log, "w") as f:
             f.write(err)
-        print(f"Output log files: {stdout_log}, {stderr_log}")
-        
+        logging.info(f"Output log files: {stdout_log}, {stderr_log}")
+
     if s.returncode != 0:
         if debug_popen_impl:
-            print('failed')
+            logging.error(f"PID {s.pid}) result: Fail")
         write_logs(out, err)
         raise RuntimeError(f"Command failed: {command}. Exitcode: {s.returncode}")
     if debug_popen_impl:
-        print(f'result: {s.returncode == 0}')
+        logging.info(f"PID {s.pid}) result: Success")
         write_logs(out, err)
