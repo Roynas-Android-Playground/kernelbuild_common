@@ -156,6 +156,7 @@ class KernelBuild:
         make_defconfig += common_make
         make_defconfig += self.buildDefconfigList()
 
+        global popen_impl
         if self.args.show_output:
             def popen_impl(args):
                 s = subprocess.Popen(args)
