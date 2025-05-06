@@ -5,14 +5,12 @@ debug_popen_impl = False
 
 
 def popen_impl(command: "list[str]"):
-    s = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    s = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     if debug_popen_impl:
         logging.debug(f"Executing command: \"{' '.join(command)}\"... has pid {s.pid}")
     out, err = s.communicate()
 
-    def write_logs(out: bytes, err: bytes):
-        out = out.decode("utf-8")
-        err = err.decode("utf-8")
+    def write_logs(out: str, err: str):
         stdout_log = str(s.pid) + "_stdout.log"
         stderr_log = str(s.pid) + "_stderr.log"
         with open(stdout_log, "w") as f:
