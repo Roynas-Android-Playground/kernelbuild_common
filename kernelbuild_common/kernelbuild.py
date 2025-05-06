@@ -161,6 +161,8 @@ class KernelBuild:
             def popen_impl(args):
                 s = subprocess.Popen(args)
                 s.wait()
+                if s.returncode != 0:
+                    raise RuntimeError(f'Process returned exit code {s.returncode}')
         t = datetime.now()
         logging.info("Make defconfig")
         popen_impl(make_defconfig)
