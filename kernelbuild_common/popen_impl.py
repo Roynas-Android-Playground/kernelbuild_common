@@ -7,7 +7,7 @@ debug_popen_impl = False
 def popen_impl(command: "list[str]"):
     s = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     if debug_popen_impl:
-        logging.debug(f'Executing command: "{' '.join(command)}"... has pid {s.pid}')
+        logging.debug(f"Executing command: \"{' '.join(command)}\"... has pid {s.pid}")
     out, err = s.communicate()
 
     def write_logs(out: bytes, err: bytes):
