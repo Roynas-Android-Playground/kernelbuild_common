@@ -3,12 +3,14 @@ from pathlib import Path
 from datetime import datetime
 import os
 import shutil
+import subprocess
 from typing import Optional
 
 from .utils import check_file, print_dictinfo, match_and_get, zip_files
 from .popen_impl import popen_impl
 from .compiler import CompilerClang, CompilerGCC
 from .loginit import logging
+
 
 class KernelBuild:
     def __init__(
@@ -33,6 +35,11 @@ class KernelBuild:
         )
         argparser.add_argument(
             "--allow-dirty", action="store_true", help="Allow dirty builds"
+        )
+        argparser.add_argument(
+            "--show-output",
+            action="store_true",
+            help="Show build output and don't write files",
         )
         argparser.add_argument(
             "--prefix",
@@ -71,12 +78,16 @@ class KernelBuild:
                 except KeyError:
                     logging.error(f"Unknown arch: {self.arch}")
                     return False
-                file = [l for l in maybeExe.iterdir() if l.name.startswith(archPrefix) and l.name.endswith('gcc')]
+                file = [
+                    l
+                    for l in maybeExe.iterdir()
+                    if l.name.startswith(archPrefix) and l.name.endswith("gcc")
+                ]
                 if len(file) == 0:
                     logging.error("Could not auto detect prefix")
                     return False
                 maybeExe = file[0]
-                logging.info(f'Using {maybeExe}')
+                logging.info(f"Using {maybeExe}")
 
             self.toolchaincls = CompilerGCC(maybeExe)
 
@@ -145,6 +156,10 @@ class KernelBuild:
         make_defconfig += common_make
         make_defconfig += self.buildDefconfigList()
 
+        if self.args.show_output:
+            def popen_impl(args):
+                s = subprocess.Popen(args)
+                s.wait()
         t = datetime.now()
         logging.info("Make defconfig")
         popen_impl(make_defconfig)
