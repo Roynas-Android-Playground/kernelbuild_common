@@ -34,6 +34,6 @@ class CompilerBase:
         return 'Stub'
 
     def cross_compile_arg(self, arch: str):
-        if platform.machine() != arch:
+        if platform.machine() == arch:
             return None
         return f'CROSS_COMPILE={self._cross_compile_arg(arch)}'
