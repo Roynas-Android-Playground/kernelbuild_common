@@ -46,6 +46,7 @@ class KernelBuild:
             type=str,
             help="Help the script to determine correct prefix for GCC",
         )
+        argparser.add_argument('forward_args', nargs='*', help="Arguments to pass through")
         return argparser
 
     def initFiles(self) -> bool:
@@ -152,6 +153,9 @@ class KernelBuild:
         if maybeCrossComp:
             common_make.append(maybeCrossComp)
         common_make += self.additionalMakeArgs()
+        if len(self.args.forward_args) != 0:
+            logging.info(f"Passing arg [{','.join(self.args.forward_args)}] to make")
+            common_make += self.args.forward_args
         make_defconfig: "list[str]" = []
         make_defconfig += common_make
         make_defconfig += self.buildDefconfigList()
